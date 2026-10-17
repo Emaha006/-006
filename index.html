@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F172A">
+<title>Мықты бол</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap">
+<style>
+/* Палитра: тёмно-синий #0F172A, синий #2563EB, белый #F8FAFC. Синий для кнопок и заливок, светло-синий для текста-акцента на тёмном. Шапка с разделами, под ней карточки в две колонки, на телефоне колонки встают друг под другом. Намеренно одна тёмная тема. Шрифт Inter поддерживает казахские буквы (Қ, Ү, Ө, І). */
+:root{
+  --bg:#0F172A; --surface:#1E293B; --surface2:#334155; --line:#273449; --line2:#3F4E66;
+  --fg:#F8FAFC; --fg2:#CBD5E1; --muted:#94A3B8; --accent:#2563EB; --accent2:#7FB0FF; --ink:#F8FAFC; --warm:#F8FAFC;
+  --display:'Inter',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+body{background:var(--bg);color:var(--fg);font:400 15px/1.5 var(--body);margin:0}
+button,a,input{font-family:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--accent2);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:10px 24px;padding-block:10px}
+.brand{font:800 19px var(--display);letter-spacing:.02em;color:var(--accent2);white-space:nowrap;background:none;border:0;padding:0;min-height:44px}
+nav.menu{flex:1 1 320px;display:flex;flex-wrap:wrap;gap:6px}
+.nv{min-height:44px;padding:0 18px;border-radius:22px;border:0;background:transparent;color:var(--fg2);font:600 15px var(--body)}
+.nv:hover{background:var(--surface2)}
+.nv[aria-current="page"]{background:var(--accent);color:var(--ink);font-weight:700}
+main .wrap{padding-block:32px 56px}
+h1{margin:0;font:800 clamp(28px,5vw,44px)/1.12 var(--display);text-wrap:balance}
+h1 em{font-style:normal;color:var(--accent2)}
+h2{margin:0 0 12px;font:700 15px var(--body)}
+.lead{font-size:17px;color:var(--fg2);max-width:640px;margin:10px 0 0}
+.page{display:flex;flex-direction:column;gap:28px}
+.row{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start}
+.col{flex:1 1 360px;min-width:0;display:flex;flex-direction:column;gap:20px}
+.card{background:var(--surface);border-radius:24px;padding:24px;min-width:0}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.display{font-family:var(--display);font-weight:700}
+.bar{height:10px;border-radius:5px;background:var(--surface2);overflow:hidden}
+.bar>i{display:block;height:100%;border-radius:5px;background:var(--accent)}
+.bar.warm>i{background:var(--accent2)}
+.bar.lg{height:14px;border-radius:7px}
+.bar.lg>i{border-radius:7px}
+.btn{min-height:56px;border-radius:28px;border:0;padding:0 28px;font:700 16px var(--body);background:var(--accent);color:var(--ink)}
+.btn.block{width:100%}
+.btn.ghost{background:transparent;border:2px solid var(--accent);color:var(--accent2)}
+.btn.line{background:transparent;border:2px solid var(--line2);color:var(--fg)}
+.btn.off{background:var(--surface2);color:var(--muted);cursor:default}
+.btn.sm{min-height:44px;padding:0 20px;font-size:15px}
+.crave{width:100%;min-height:96px;border-radius:24px;border:0;background:var(--fg);color:#0F172A;text-align:left;padding:16px 24px;display:flex;flex-direction:column;gap:4px;justify-content:center}
+.crave b{font:700 22px var(--display)}
+.crave span{font:600 15px var(--body)}
+/* кольцо серии */
+.ringbox{position:relative;width:240px;max-width:100%;aspect-ratio:1;margin:0 auto}
+.ringbox svg{width:100%;height:100%;display:block}
+.ringnum{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ringnum b{font:700 76px/1 var(--display)}
+.week{display:flex;justify-content:space-between;gap:6px;width:100%}
+.week div{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.dot{width:34px;height:34px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;color:var(--ink)}
+.dot.done{background:var(--accent)}
+.dot.today{background:transparent;border:2px solid var(--accent)}
+.level{display:flex;align-items:center;gap:20px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:0 18px;border-radius:22px;border:2px solid var(--line2);background:var(--bg);color:var(--fg);font:600 15px var(--body)}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--ink)}
+.entry{background:var(--surface);border-radius:18px;padding:16px 20px;display:flex;flex-direction:column;gap:4px}
+.entry small{font-size:13px;color:var(--muted)}
+.entry b{font:600 16px var(--body)}
+.callout{background:var(--accent);color:var(--ink);border-radius:24px;padding:28px;display:flex;flex-direction:column;gap:8px}
+.callout b{font:700 clamp(22px,4vw,30px)/1.2 var(--display)}
+.bars{display:flex;align-items:flex-end;justify-content:space-between;height:140px;gap:4px}
+.bars div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;font-size:12px;color:var(--muted)}
+.bars i{display:block;width:min(28px,100%);border-radius:6px;background:var(--line2)}
+.bars i.peak{background:var(--accent)}
+.kv{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;font-size:15px}
+.kv b{color:var(--accent2)}
+.plan{display:flex;flex-wrap:wrap;align-items:center;gap:16px 24px;background:var(--surface2);border-radius:24px;padding:24px}
+.plan p{flex:1 1 300px;margin:0;font:700 18px/1.4 var(--body)}
+/* цель */
+.goalname{font:700 16px var(--body)}
+.goalsum{font:800 32px var(--display);color:var(--accent2)}
+.tagnote{display:inline-block;font:700 12px var(--body);color:var(--ink);background:var(--accent);border-radius:10px;padding:2px 10px}
+.field{display:flex;flex-direction:column;gap:8px}
+.field label{font:700 14px var(--body);color:var(--fg2)}
+.inwrap{position:relative}
+.in{width:100%;min-height:52px;border-radius:14px;border:2px solid var(--line2);background:var(--bg);color:var(--fg);padding:0 44px 0 16px;font:600 17px var(--body)}
+.in.txt{padding-right:16px}
+.in.area{min-height:104px;padding:12px 16px;resize:vertical;line-height:1.5;display:block}
+.count{font-size:12px;color:var(--muted);text-align:right}
+.entry span{font:400 14px/1.4 var(--body);color:var(--fg2)}
+.in:focus{border-color:var(--accent)}
+.in::placeholder{color:var(--muted);font-weight:400}
+.cur{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--muted);font-weight:700;pointer-events:none}
+.preview{font-size:14px;color:var(--fg2);background:var(--surface2);border-radius:14px;padding:12px 16px;min-height:44px}
+.err{font:700 14px var(--body);color:#FCA5A5}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+/* щит */
+.meter{display:flex;flex-wrap:wrap;align-items:center;gap:20px 28px}
+.meter svg{flex-shrink:0}
+.meter-body{flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:10px}
+.pct{font:800 52px/1 var(--display);color:var(--accent2)}
+.ladder{display:flex;flex-direction:column;gap:8px}
+.step{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:4px 12px;border-radius:14px;padding:12px 16px;border:2px solid var(--line);color:var(--muted)}
+.step b{font-weight:700;color:var(--fg2)}
+.step.now{border-color:var(--accent);background:var(--surface2);color:var(--fg)}
+.step.now b{color:var(--accent2)}
+.tag{font:700 12px var(--body);background:var(--accent);color:var(--ink);border-radius:10px;padding:2px 10px;margin-left:8px}
+.check{width:100%;display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-radius:16px;background:var(--surface);color:var(--fg);border:2px solid transparent;text-align:left;font:600 15px/1.4 var(--body)}
+.check:hover{border-color:var(--line2)}
+.check[aria-pressed="true"]{border-color:var(--accent)}
+.check small{display:block;margin-top:4px;font:400 14px/1.4 var(--body);color:var(--muted)}
+.box{width:26px;height:26px;border-radius:8px;border:2px solid #64748B;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;color:var(--ink)}
+.check[aria-pressed="true"] .box{background:var(--accent);border-color:var(--accent)}
+.cards3{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
+.go{text-align:left;background:var(--surface);border:0;border-radius:20px;padding:20px;color:var(--fg);display:flex;flex-direction:column;gap:6px}
+.go:hover{background:var(--surface2)}
+.go b{font:700 16px var(--display)}
+.go span{font-size:14px;color:var(--muted)}
+footer.foot{border-top:1px solid var(--line)}
+footer.foot .wrap{padding-block:20px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px;font-size:13px;color:var(--muted)}
+footer.foot b{color:var(--fg2)}
+/* окно и уведомление */
+.veil{position:fixed;inset:0;z-index:30;background:rgba(2,6,23,.92);display:flex;align-items:center;justify-content:center;padding:20px max(16px,env(safe-area-inset-right,0px)) 20px max(16px,env(safe-area-inset-left,0px));overflow-y:auto}
+.dlg{width:100%;max-width:520px;background:var(--bg);border:1px solid var(--line);border-radius:28px;padding:28px;display:flex;flex-direction:column;gap:18px}
+.dlg h2{margin:0;font:700 28px/1.15 var(--display)}
+.task{width:100%;min-height:76px;border-radius:20px;border:0;background:var(--surface);color:var(--fg);padding:12px 20px;text-align:left;display:flex;flex-direction:column;gap:4px}
+.task:hover{background:var(--surface2)}
+.task b{font:700 17px var(--body)}
+.task span{font-size:14px;color:var(--muted)}
+.close{align-self:flex-end;min-height:44px;padding:0 18px;border-radius:22px;border:1px solid var(--line2);background:transparent;color:var(--fg2);font:600 14px var(--body)}
+.breath{width:200px;height:200px;border-radius:50%;background:var(--accent);margin:12px auto;animation:breathe 10s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.62)}50%{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.breath{animation:none}}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:40;width:calc(100% - 32px);max-width:460px;background:var(--surface2);border:1px solid var(--accent);border-radius:16px;padding:14px 18px;font:600 14px/1.4 var(--body)}
+@media (max-width:520px){.ringnum b{font-size:60px}.card{padding:20px}.pct{font-size:44px}.goalsum{font-size:28px}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <button class="brand" type="button" data-a="go" data-v="home">МЫҚТЫ БОЛ</button>
+    <nav class="menu" aria-label="Разделы" id="menu"></nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section id="s-home" class="page" aria-label="Главная"></section>
+    <section id="s-diary" class="page" aria-label="Дневник" hidden></section>
+    <section id="s-insights" class="page" aria-label="Личный разбор" hidden></section>
+    <section id="s-shield" class="page" aria-label="Щит" hidden></section>
+    <section id="s-help" class="page" aria-label="Нужна помощь" hidden></section>
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <b>Мықты бол · Профилактика лудомании среди молодёжи</b>
+    <span>Сайт дополняет помощь специалистов, но не заменяет её.</span>
+  </div>
+</footer>
+
+<div id="veil" class="veil" role="dialog" aria-modal="true" aria-label="Тянет поставить" hidden></div>
+<div id="toast" class="toast" role="status" hidden></div>
+
+<script>
+(function () {
+  var STORE_KEY = 'mykty-goal';
+  var S = {
+    sec: 'home', checked: false, streak: 12, xp: 340,
+    crave: 0, task: null,
+    trig: [], when: null, note: '',
+    entries: [
+      { t: 'Пятница, вечер', d: 'Матч · Друзья ставят', n: 'Смотрели матч у друга, все начали ставить, и я чуть не открыл приложение.' },
+      { t: 'Вторник, день', d: 'Скука', n: '' }
+    ],
+    plan: false,
+    shield: { a: true, b: false, c: false, d: false },
+    goal: { name: 'Новые кроссовки', amount: 60000, daily: 1500, set: false },
+    edit: false, draft: null, err: '', errField: '',
+    toast: ''
+  };
+
+  /* цель живёт в браузере этого человека; если хранилище недоступно, сайт работает без него */
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (raw) {
+      var g = JSON.parse(raw);
+      if (g && typeof g.name === 'string' && g.amount > 0 && g.daily > 0) {
+        S.goal = { name: g.name.slice(0, 40), amount: Math.floor(g.amount), daily: Math.floor(g.daily), set: true };
+      }
+    }
+  } catch (e) {}
+  function saveGoal() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(S.goal)); } catch (e) {}
+  }
+
+  var NAV = [
+    ['home', 'Главная'], ['diary', 'Дневник'], ['insights', 'Личный разбор'],
+    ['shield', 'Щит'], ['help', 'Нужна помощь']
+  ];
+  var TRIG = ['Скука', 'Ссора', 'Матч', 'Зарплата', 'Друзья ставят', 'Реклама', 'Стресс'];
+  var WHEN = ['Утро', 'День', 'Вечер', 'Ночь'];
+  var GOAL_NAMES = ['Кроссовки', 'Телефон', 'Поездка', 'Накопления'];
+  var DAILY = [500, 1000, 1500, 2000, 3000];
+  var TASKS = {
+    breath: { title: 'Дыхание · 2 минуты', sub: 'Быстрее всего сбивает пик желания', text: 'Вдох на 4 счёта, пауза на 4, медленный выдох на 6. Повтори шесть раз.' },
+    squats: { title: '15 приседаний', sub: 'Адреналин без ставки', text: 'Встань и сделай 15 приседаний в своём темпе. Телу нужна разрядка, а не ставка.' },
+    voice: { title: 'Голосовое другу', sub: 'Скажи вслух: «Меня сейчас тянет»', text: 'Запиши другу голосовое: «Меня тянет поставить, поддержи». Просто отправь, ответ необязателен.' }
+  };
+  var SHIELD = [
+    ['a', 'Выключить уведомления ставочных приложений', 'Настройки телефона → Уведомления → выбери приложения букмекеров и выключи.'],
+    ['b', 'Выйти из каналов и чатов со ставками', 'Telegram, Instagram, TikTok: отпишись и отключи уведомления.'],
+    ['c', 'Скрыть рекламу ставок', 'Под ставочным постом нажми «Скрыть» или «Пожаловаться». Лента перестанет её показывать.'],
+    ['d', 'Удалить карту из аккаунтов букмекеров', 'Без сохранённой карты поставить на импульсе сложнее.']
+  ];
+  var CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
+
+  function fmt(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+  function plural(n, a, b, c) {
+    var m10 = n % 10, m100 = n % 100;
+    if (m10 === 1 && m100 !== 11) return a;
+    if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return b;
+    return c;
+  }
+  function days(n) { return n + ' ' + plural(n, 'день', 'дня', 'дней'); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function $(id) { return document.getElementById(id); }
+  function digits(s) { return String(s).replace(/\D/g, '').slice(0, 9); }
+
+  /* ---------- разделы ---------- */
+  function menuHTML() {
+    return NAV.map(function (n) {
+      return '<button type="button" class="nv" data-a="go" data-v="' + n[0] + '"' + (S.sec === n[0] ? ' aria-current="page"' : '') + '>' + n[1] + '</button>';
+    }).join('');
+  }
+
+  function previewText(amount, daily) {
+    var a = parseInt(amount, 10), d = parseInt(daily, 10);
+    if (!(a > 0) || !(d > 0)) return 'Укажи сумму цели и сколько откладываешь в день, и мы посчитаем срок.';
+    if (d > a) return 'Сумма в день больше самой цели. Проверь числа.';
+    return 'При ' + fmt(d) + ' ₸ в день цель достигается примерно за ' + days(Math.ceil(a / d)) + '.';
+  }
+
+  function goalHTML() {
+    var g = S.goal;
+    if (S.edit) {
+      var d = S.draft;
+      var nameChips = GOAL_NAMES.map(function (n) {
+        return '<button type="button" class="chip" data-a="gname" data-v="' + esc(n) + '" aria-pressed="' + (d.name === n) + '">' + n + '</button>';
+      }).join('');
+      var dailyChips = DAILY.map(function (n) {
+        return '<button type="button" class="chip" data-a="gdaily" data-v="' + n + '" aria-pressed="' + (String(d.daily) === String(n)) + '">' + fmt(n) + '</button>';
+      }).join('');
+      return '<form class="card" id="goalform" novalidate style="display:flex;flex-direction:column;gap:18px" aria-label="Моя цель">' +
+        '<h2 style="margin:0">Моя цель</h2>' +
+        '<div class="field"><label for="g-name">На что копишь</label>' +
+          '<input class="in txt" id="g-name" data-k="g-name" type="text" maxlength="40" autocomplete="off" placeholder="Например, новый телефон" value="' + esc(d.name) + '">' +
+          '<div class="chips">' + nameChips + '</div></div>' +
+        '<div class="field"><label for="g-amount">Сколько нужно</label>' +
+          '<div class="inwrap"><input class="in" id="g-amount" data-k="g-amount" type="text" inputmode="numeric" autocomplete="off" placeholder="60000" value="' + esc(d.amount) + '"><span class="cur" aria-hidden="true">₸</span></div></div>' +
+        '<div class="field"><label for="g-daily">Сколько откладываю каждый день без ставки</label>' +
+          '<div class="inwrap"><input class="in" id="g-daily" data-k="g-daily" type="text" inputmode="numeric" autocomplete="off" placeholder="1500" value="' + esc(d.daily) + '"><span class="cur" aria-hidden="true">₸</span></div>' +
+          '<div class="chips">' + dailyChips + '</div></div>' +
+        '<div class="preview" id="g-preview" aria-live="polite">' + previewText(d.amount, d.daily) + '</div>' +
+        (S.err ? '<div class="err" role="alert">' + esc(S.err) + '</div>' : '') +
+        '<div class="btns"><button type="submit" class="btn sm" data-a="gsave">Сохранить цель</button><button type="button" class="btn sm line" data-a="gcancel">Отмена</button></div>' +
+      '</form>';
+    }
+    var saved = S.streak * g.daily;
+    var reached = saved >= g.amount;
+    var pct = Math.min(100, Math.round(saved / g.amount * 100));
+    var left = Math.max(0, Math.ceil((g.amount - saved) / g.daily));
+    return '<div class="card" style="display:flex;flex-direction:column;gap:14px">' +
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="small muted">Моя цель</span>' + (g.set ? '' : '<span class="tagnote">Пример</span>') + '</div>' +
+      '<div class="goalname">' + esc(g.name) + '</div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="goalsum">' + fmt(Math.min(saved, g.amount)) + '&nbsp;₸</span><span class="small muted">из ' + fmt(g.amount) + '&nbsp;₸</span></div>' +
+      '<div class="bar" role="img" aria-label="Накоплено ' + pct + ' процентов цели"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="small muted">Откладываю ' + fmt(g.daily) + '&nbsp;₸ за каждый день без ставки. ' +
+        (reached ? 'Цель достигнута. Поставь следующую.' : 'Осталось примерно ' + days(left) + '.') + '</div>' +
+      (g.set ? '' : '<div class="small muted">Это пример. Поставь свою цель, и копилка пересчитается.</div>') +
+      '<div><button type="button" class="btn sm ' + (g.set && !reached ? 'line' : '') + '" data-a="gedit" data-k="gedit">' + (g.set ? (reached ? 'Поставить новую цель' : 'Изменить цель') : 'Поставить свою цель') + '</button></div>' +
+    '</div>';
+  }
+
+  function homeHTML() {
+    var ms = [3, 7, 14, 30, 60, 100, 365];
+    var next = 365;
+    for (var i = 0; i < ms.length; i++) { if (ms[i] > S.streak) { next = ms[i]; break; } }
+    var toNext = next - S.streak;
+    var offset = (527.8 * (1 - S.streak / next)).toFixed(1);
+    var titles = ['Новичок', 'Боец', 'Стойкий', 'Крепкий', 'Мықты'];
+    var level = Math.min(5, Math.floor(S.xp / 100) + 1);
+    var xpPct = level >= 5 ? 100 : S.xp % 100;
+    var labels = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], todayIdx = 2;
+    var week = labels.map(function (l, i) {
+      var done = i < todayIdx || (i === todayIdx && S.checked);
+      var cls = done ? 'dot done' : (i === todayIdx ? 'dot today' : 'dot');
+      return '<div><span>' + l + '</span><span class="' + cls + '">' + (done ? CHECK : '') + '</span></div>';
+    }).join('');
+
+    return '' +
+      '<div><h1>Мықты бол.<br><em>Держи серию.</em></h1>' +
+      '<p class="lead">Каждый день без ставки делает тебя сильнее. Копи дни, открывай уровни и приближай свою цель.</p></div>' +
+      '<div class="row">' +
+        '<div class="col"><div class="card" style="display:flex;flex-direction:column;align-items:center;gap:20px;padding:28px 24px">' +
+          '<div class="ringbox"><svg viewBox="0 0 200 200" aria-hidden="true">' +
+            '<circle cx="100" cy="100" r="84" fill="none" stroke="#334155" stroke-width="12"/>' +
+            '<circle cx="100" cy="100" r="84" fill="none" stroke="#3B82F6" stroke-width="12" stroke-linecap="round" stroke-dasharray="527.8" stroke-dashoffset="' + offset + '" transform="rotate(-90 100 100)"/></svg>' +
+            '<div class="ringnum"><b>' + S.streak + '</b><span class="muted">' + plural(S.streak, 'день', 'дня', 'дней') + ' подряд</span></div></div>' +
+          '<div class="small muted">Ещё ' + days(toNext) + ' до отметки ' + next + '</div>' +
+          '<button type="button" class="btn block' + (S.checked ? ' ghost' : '') + '" data-a="checkin" data-k="checkin">' + (S.checked ? 'Сегодня отмечено · +10 опыта' : 'Сегодня без ставок') + '</button>' +
+          '<div class="week" aria-label="Эта неделя">' + week + '</div>' +
+        '</div></div>' +
+        '<div class="col">' +
+          '<button type="button" class="crave" data-a="crave" data-k="crave"><b>Тянет поставить</b><span>Нажми, и мы поможем пережить следующие 5 минут</span></button>' +
+          '<div class="card level">' +
+            '<svg width="64" height="74" viewBox="0 0 56 64" aria-hidden="true" style="flex-shrink:0"><path d="M28 3 L52 12 V32 C52 47 41 57 28 61 C15 57 4 47 4 32 V12 Z" fill="#2563EB"/><text x="28" y="41" text-anchor="middle" font-size="24" font-weight="800" fill="#F8FAFC">' + level + '</text></svg>' +
+            '<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px">' +
+              '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap"><span class="display" style="font-size:18px">' + titles[level - 1] + '</span><span class="small muted">' + S.xp + ' опыта</span></div>' +
+              '<div class="bar"><i style="width:' + xpPct + '%"></i></div></div></div>' +
+          goalHTML() +
+        '</div>' +
+      '</div>' +
+      '<div class="cards3">' +
+        '<button type="button" class="go" data-a="go" data-v="diary"><b>Дневник</b><span>Записывай, что запускает желание</span></button>' +
+        '<button type="button" class="go" data-a="go" data-v="insights"><b>Личный разбор</b><span>Узнай свои слабые часы и что помогает</span></button>' +
+        '<button type="button" class="go" data-a="go" data-v="shield"><b>Щит</b><span>Защита от ставочной рекламы и соблазнов</span></button>' +
+      '</div>';
+  }
+
+  function diaryHTML() {
+    var can = S.trig.length > 0 || S.note.trim().length > 0;
+    var trig = TRIG.map(function (t) {
+      return '<button type="button" class="chip" data-a="trig" data-v="' + esc(t) + '" data-k="t-' + esc(t) + '" aria-pressed="' + (S.trig.indexOf(t) >= 0) + '">' + t + '</button>';
+    }).join('');
+    var when = WHEN.map(function (t) {
+      return '<button type="button" class="chip" data-a="when" data-v="' + t + '" data-k="w-' + t + '" aria-pressed="' + (S.when === t) + '">' + t + '</button>';
+    }).join('');
+    var entries = S.entries.map(function (e) {
+      return '<div class="entry"><small>' + esc(e.t) + '</small><b>' + esc(e.d) + '</b>' + (e.n ? '<span>' + esc(e.n) + '</span>' : '') + '</div>';
+    }).join('');
+    return '' +
+      '<div><h1>Дневник триггеров</h1><p class="lead">Отметь, что было перед желанием поставить. Через пару недель покажем твой личный разбор: когда и почему тянет.</p></div>' +
+      '<div class="row">' +
+        '<div class="col"><div class="card" style="display:flex;flex-direction:column;gap:22px">' +
+          '<div><h2>Что случилось перед этим?</h2><div class="chips">' + trig + '</div></div>' +
+          '<div class="field"><label for="d-note">Расскажи своими словами (по желанию)</label>' +
+            '<textarea class="in txt area" id="d-note" maxlength="300" placeholder="Например: поругался с другом, остался один дома, и сразу захотелось поставить">' + esc(S.note) + '</textarea>' +
+            '<div class="count" id="d-count">' + S.note.length + ' из 300</div></div>' +
+          '<div><h2>Когда?</h2><div class="chips">' + when + '</div></div>' +
+          '<button type="button" class="btn block' + (can ? '' : ' off') + '" data-a="save" data-k="save"' + (can ? '' : ' aria-disabled="true"') + '>Записать</button>' +
+        '</div></div>' +
+        '<div class="col" style="gap:12px"><h2 style="margin:0">Последние записи</h2>' + entries +
+          '<button type="button" class="btn line block" data-a="go" data-v="insights" style="margin-top:8px">Смотреть личный разбор</button></div>' +
+      '</div>';
+  }
+
+  function insightsHTML() {
+    var dd = [['Пн', 1], ['Вт', 1], ['Ср', 2], ['Чт', 2], ['Пт', 5], ['Сб', 3], ['Вс', 2]];
+    var bars = dd.map(function (d) {
+      return '<div><i class="' + (d[1] === 5 ? 'peak' : '') + '" style="height:' + (d[1] * 22) + 'px"></i><span>' + d[0] + '</span></div>';
+    }).join('');
+    var trig = [['Матч', 70], ['Скука', 55], ['Реклама', 35], ['Зарплата', 20]].map(function (t) {
+      return '<div style="display:flex;flex-direction:column;gap:6px"><span class="small">' + t[0] + '</span><div class="bar warm" style="height:8px"><i style="width:' + t[1] + '%"></i></div></div>';
+    }).join('');
+    var helped = [['Пробежка', '5 из 6 раз'], ['Голосовое другу', '3 из 4 раз'], ['Приседания', '2 из 5 раз']].map(function (h) {
+      return '<div class="kv"><span>' + h[0] + '</span><b>' + h[1] + '</b></div>';
+    }).join('');
+    return '' +
+      '<div><h1>Личный разбор</h1><p class="lead">Так выглядит разбор после двух недель записей в дневнике. Данные демонстрационные.</p></div>' +
+      '<div class="callout"><span style="font:600 14px var(--body)">Чаще всего тянет</span><b>в пятницу вечером</b><span style="font:600 16px var(--body)">Когда рядом матчи и друзья обсуждают ставки.</span></div>' +
+      '<div class="row">' +
+        '<div class="col card"><h2>Когда тянет по дням недели</h2><div class="bars">' + bars + '</div></div>' +
+        '<div class="col card" style="gap:14px"><h2 style="margin:0">Главные триггеры</h2>' + trig + '</div>' +
+        '<div class="col card"><h2>Что помогало лучше всего</h2>' + helped + '</div>' +
+      '</div>' +
+      '<div class="plan"><p>Давай заранее займём пятничный вечер: тренировка вместо ставки?</p>' +
+        '<button type="button" class="btn' + (S.plan ? ' ghost' : '') + '" data-a="plan" data-k="plan">' + (S.plan ? 'Запланировано · напомним в пятницу в 17:45' : 'Запланировать тренировку на пятницу, 18:00') + '</button></div>';
+  }
+
+  function shieldHTML() {
+    var done = 0;
+    SHIELD.forEach(function (s) { if (S.shield[s[0]]) done++; });
+    var streakPart = Math.min(S.streak, 30) / 30 * 50;
+    var cleanPart = done / SHIELD.length * 50;
+    var pct = Math.round(streakPart + cleanPart);
+    var cur = S.streak >= 30 ? 2 : (S.streak >= 7 ? 1 : 0);
+    var ladder = [
+      ['1–6 дней серии', 'пишем каждый день'],
+      ['7–29 дней', 'пишем 3 раза в неделю'],
+      ['30 дней и больше', 'только награды и итоги']
+    ].map(function (r, i) {
+      return '<div class="step' + (i === cur ? ' now' : '') + '"><span>' + r[0] + (i === cur ? '<span class="tag">Ты здесь</span>' : '') + '</span><b>' + r[1] + '</b></div>';
+    }).join('');
+    var items = SHIELD.map(function (s) {
+      var on = !!S.shield[s[0]];
+      return '<button type="button" class="check" data-a="shield" data-v="' + s[0] + '" data-k="sh-' + s[0] + '" aria-pressed="' + on + '"><span class="box">' + (on ? CHECK : '') + '</span><span><span>' + s[1] + '</span><small>' + s[2] + '</small></span></button>';
+    }).join('');
+    return '' +
+      '<div><h1>Щит</h1><p class="lead">Щит защищает тебя от ставок вокруг: от рекламы, каналов и уведомлений. Он растёт от двух вещей: твоей серии и того, что ты убрал из телефона.</p></div>' +
+      '<div class="card meter">' +
+        '<svg width="84" height="96" viewBox="0 0 56 64" aria-hidden="true"><path d="M28 3 L52 12 V32 C52 47 41 57 28 61 C15 57 4 47 4 32 V12 Z" fill="#2563EB"/></svg>' +
+        '<div class="meter-body">' +
+          '<span class="small muted">Защита сейчас</span>' +
+          '<div class="pct" aria-label="' + pct + ' процентов">' + pct + '%</div>' +
+          '<div class="bar lg" role="img" aria-label="Защита ' + pct + ' процентов"><i style="width:' + pct + '%"></i></div>' +
+          '<div class="small muted">Серия: ' + Math.min(S.streak, 30) + ' из 30 дней · Телефон: ' + done + ' из ' + SHIELD.length + ' шагов</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="row">' +
+        '<div class="col card" style="gap:6px"><h2>Что делаем мы</h2><p class="small muted" style="margin:0 0 4px">Чем длиннее серия, тем реже мы тебе пишем. Когда ты держишься, напоминания только отвлекают.</p><div class="ladder">' + ladder + '</div></div>' +
+        '<div class="col" style="gap:10px"><h2 style="margin:0">Что делаешь ты</h2><p class="small muted" style="margin:0">Четыре шага, после которых ставки перестанут попадаться тебе на глаза. Отмечай то, что уже сделал.</p>' + items +
+          '<p class="small muted" style="margin:0">Сайт не может сам менять настройки твоего телефона. Он подсказывает, что сделать, и считает твой прогресс.</p></div>' +
+      '</div>';
+  }
+
+  function helpHTML() {
+    return '' +
+      '<div><h1>Ты не один</h1><p class="lead">Если справляться самому тяжело, это нормально. Поговори с человеком, это тоже сила.</p></div>' +
+      '<div class="cards3">' +
+        '<div class="card"><h2>Горячая линия помощи</h2><span class="muted">[добавим проверенный номер]</span></div>' +
+        '<div class="card"><h2>Психолог колледжа или вуза</h2><span class="muted">[контакты партнёрских учебных заведений]</span></div>' +
+        '<div class="card"><h2>Анонимный чат с волонтёром-ровесником</h2><span class="muted">Без имени и осуждения</span></div>' +
+      '</div>' +
+      '<div><button type="button" class="btn line" data-a="go" data-v="home">Вернуться на главную</button></div>';
+  }
+
+  var RENDER = { home: homeHTML, diary: diaryHTML, insights: insightsHTML, shield: shieldHTML, help: helpHTML };
+
+  function veilHTML() {
+    if (S.crave === 1) {
+      var tasks = Object.keys(TASKS).map(function (id) {
+        return '<button type="button" class="task" data-a="task" data-v="' + id + '"><b>' + TASKS[id].title + '</b><span>' + TASKS[id].sub + '</span></button>';
+      }).join('');
+      return '<div class="dlg"><button type="button" class="close" data-a="close">Закрыть</button>' +
+        '<h2>Стоп. Это пройдёт.</h2><p class="muted" style="margin:0">Желание поставить обычно держится недолго и потом спадает. Выбери, чем займёшь это время.</p>' +
+        '<div style="display:flex;flex-direction:column;gap:10px">' + tasks + '</div></div>';
+    }
+    if (S.crave === 2) {
+      var t = TASKS[S.task] || TASKS.breath;
+      return '<div class="dlg"><button type="button" class="close" data-a="close">Закрыть</button>' +
+        '<h2 style="font-size:24px">' + t.title + '</h2><p style="margin:0;font-size:16px;color:var(--fg2)">' + t.text + '</p>' +
+        '<div class="breath" aria-hidden="true"></div>' +
+        '<p class="small muted" style="margin:0;text-align:center">Дыши ровно, пока делаешь. Шар растёт на вдохе и сжимается на выдохе.</p>' +
+        '<button type="button" class="btn block" data-a="done">Прошло, я справился</button></div>';
+    }
+    if (S.crave === 3) {
+      return '<div class="dlg" style="align-items:center;text-align:center;padding:36px 28px">' +
+        '<div style="width:96px;height:96px;border-radius:50%;background:var(--accent);color:var(--ink);display:flex;align-items:center;justify-content:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div>' +
+        '<h2>Ты удержал серию</h2><p style="margin:0;font-size:16px;color:var(--fg2)">+20 опыта. Каждый такой момент делает следующий легче.</p>' +
+        '<button type="button" class="btn block" data-a="close" style="margin-top:8px">Вернуться на сайт</button></div>';
+    }
+    return '';
+  }
+
+  /* ---------- отрисовка ---------- */
+  function render(focusKey) {
+    $('menu').innerHTML = menuHTML();
+    Object.keys(RENDER).forEach(function (id) {
+      var el = $('s-' + id);
+      var on = S.sec === id;
+      el.hidden = !on;
+      if (on) el.innerHTML = RENDER[id]();
+    });
+    var v = $('veil');
+    v.hidden = S.crave === 0;
+    v.innerHTML = veilHTML();
+    var t = $('toast');
+    t.hidden = !S.toast;
+    t.textContent = S.toast;
+    if (S.crave) {
+      var f = v.querySelector('button.task, .btn');
+      if (f && focusKey !== 'keep') f.focus();
+    } else if (focusKey && focusKey !== 'keep') {
+      var el2 = document.querySelector('[data-k="' + focusKey + '"]');
+      if (el2) el2.focus();
+    }
+  }
+
+  function setToast(msg) { S.toast = msg || ''; }
+
+  function validateGoal(d) {
+    var name = String(d.name).replace(/\s+/g, ' ').trim();
+    var amount = parseInt(d.amount, 10), daily = parseInt(d.daily, 10);
+    if (!name) return { err: 'Напиши, на что копишь.', field: 'g-name' };
+    if (!(amount > 0)) return { err: 'Укажи сумму цели больше нуля.', field: 'g-amount' };
+    if (!(daily > 0)) return { err: 'Укажи, сколько откладываешь в день.', field: 'g-daily' };
+    if (daily > amount) return { err: 'Сумма в день не может быть больше самой цели.', field: 'g-daily' };
+    return { ok: { name: name.slice(0, 40), amount: amount, daily: daily, set: true } };
+  }
+
+  /* ---------- действия ---------- */
+  document.addEventListener('input', function (e) {
+    var id = e.target && e.target.id;
+    if (id === 'd-note') {
+      S.note = e.target.value.slice(0, 300);
+      var c = $('d-count'); if (c) c.textContent = S.note.length + ' из 300';
+      var sb = document.querySelector('[data-a="save"]');
+      if (sb) {
+        var ok = S.trig.length > 0 || S.note.trim().length > 0;
+        sb.classList.toggle('off', !ok);
+        if (ok) sb.removeAttribute('aria-disabled'); else sb.setAttribute('aria-disabled', 'true');
+      }
+      return;
+    }
+    if (!S.draft || !id || id.indexOf('g-') !== 0) return;
+    if (id === 'g-name') S.draft.name = e.target.value;
+    if (id === 'g-amount') { e.target.value = digits(e.target.value); S.draft.amount = e.target.value; }
+    if (id === 'g-daily') { e.target.value = digits(e.target.value); S.draft.daily = e.target.value; }
+    var p = $('g-preview');
+    if (p) p.textContent = previewText(S.draft.amount, S.draft.daily);
+  });
+
+  document.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!S.edit || !S.draft) return;
+    var r = validateGoal(S.draft);
+    if (r.err) { S.err = r.err; S.errField = r.field; render(r.field); return; }
+    S.goal = r.ok; S.edit = false; S.draft = null; S.err = '';
+    saveGoal();
+    setToast('Цель сохранена: ' + S.goal.name + '. Откладываешь ' + fmt(S.goal.daily) + ' ₸ за каждый день без ставки.');
+    render('gedit');
+  });
+
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-a]');
+    if (!el) return;
+    var a = el.getAttribute('data-a'), v = el.getAttribute('data-v'), k = el.getAttribute('data-k');
+    if (a === 'gsave') return; /* отправка формы обрабатывается в submit */
+    if (a === 'go') {
+      S.sec = v; S.toast = '';
+      render();
+      try { location.hash = v; } catch (x) {}
+      window.scrollTo(0, 0);
+      return;
+    }
+    if (a === 'checkin') {
+      if (!S.checked) {
+        S.checked = true; S.streak += 1; S.xp += 10;
+        setToast('Серия: ' + days(S.streak) + '. +10 опыта. В копилку +' + fmt(S.goal.daily) + ' ₸.');
+      }
+    } else if (a === 'crave') { S.crave = 1; S.task = null; }
+    else if (a === 'task') { S.crave = 2; S.task = v; }
+    else if (a === 'done') { S.crave = 3; S.xp += 20; }
+    else if (a === 'close') { S.crave = 0; S.task = null; }
+    else if (a === 'trig') {
+      var i = S.trig.indexOf(v);
+      if (i >= 0) S.trig.splice(i, 1); else S.trig.push(v);
+    } else if (a === 'when') { S.when = (S.when === v) ? null : v; }
+    else if (a === 'save') {
+      var note = S.note.replace(/\s+/g, ' ').trim();
+      if (S.trig.length || note) {
+        S.entries.unshift({ t: 'Сегодня, ' + (S.when || 'Вечер').toLowerCase(), d: S.trig.length ? S.trig.join(' · ') : 'Своими словами', n: note });
+        S.entries = S.entries.slice(0, 4);
+        S.trig = []; S.when = null; S.note = '';
+        setToast('Записано. Через пару недель покажем твой личный разбор.');
+      }
+    } else if (a === 'plan') {
+      S.plan = !S.plan;
+      setToast(S.plan ? 'Запланировано. Напомним в пятницу в 17:45.' : '');
+    } else if (a === 'shield') { S.shield[v] = !S.shield[v]; }
+    else if (a === 'gedit') {
+      S.edit = true; S.err = ''; S.toast = '';
+      S.draft = S.goal.set
+        ? { name: S.goal.name, amount: String(S.goal.amount), daily: String(S.goal.daily) }
+        : { name: '', amount: '', daily: '' };
+      render('g-name');
+      return;
+    } else if (a === 'gcancel') {
+      S.edit = false; S.draft = null; S.err = '';
+      render('gedit');
+      return;
+    } else if (a === 'gname') { S.draft.name = v; S.err = ''; render('keep'); var n = $('g-name'); if (n) n.focus(); return; }
+    else if (a === 'gdaily') { S.draft.daily = v; S.err = ''; render('keep'); var dd = $('g-daily'); if (dd) dd.focus(); return; }
+    render(k || 'keep');
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && S.crave) { S.crave = 0; S.task = null; render(); }
+  });
+
+  function fromHash() {
+    var h = '';
+    try { h = (location.hash || '').replace('#', ''); } catch (x) {}
+    if (RENDER[h]) S.sec = h;
+  }
+  window.addEventListener('hashchange', function () { fromHash(); render(); });
+  fromHash();
+  render();
+})();
+</script>
+
+</body>
+</html>
